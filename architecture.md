@@ -397,6 +397,79 @@ prevents the most common knowledge system failure: gradual abandonment.
 
 ---
 
+## Search Infrastructure: Three-Mode Discovery
+
+The vault is indexed by a local search service (QMD) that provides three
+complementary search modes over the full document collection (~4,300 files).
+
+| Mode | Method | Best For |
+|------|--------|----------|
+| **Keyword** | Exact word/phrase matching | Known terms, specific names, precise queries |
+| **Vector** | Embedding-based similarity | Conceptual search, synonyms, "find related ideas" |
+| **Deep** | Query expansion + hybrid + reranking | Open-ended exploration, "what do we know about X?" |
+
+### Why Three Modes
+
+No single search mode works for all knowledge retrieval tasks:
+
+| Task | Best Mode | Why |
+|------|-----------|-----|
+| "Find the file about Sen Rikyu" | Keyword | Exact name match |
+| "What do we know about simplicity in aesthetics?" | Vector | Concept may appear as wabi, restraint, reduction |
+| "Zen and practice" | Deep | Expands into related terms, searches both ways, reranks |
+
+Keyword search is fast and precise but brittle -- it misses paraphrases.
+Vector search handles meaning but can drift on ambiguous queries. Deep search
+combines both with automatic query expansion, at the cost of more computation.
+
+### Collection Segmentation
+
+The index is partitioned into collections matching the vault's containment
+boundaries:
+
+| Collection | Docs | Contains |
+|------------|------|----------|
+| jibrain | ~2,400 | Knowledge base (intake, atlas, domains) |
+| dailynote | ~1,000 | Daily notes (temporal, operational) |
+| people | ~900 | Contact profiles (private) |
+
+Agents can scope searches to a single collection. This prevents temporal
+content (daily notes) from polluting knowledge searches, reinforcing the
+same containment principle that governs the directory structure.
+
+### Agent Search Patterns
+
+For agents operating on the vault, the recommended search strategy:
+
+1. **Start with keyword** when you have specific terms (person names, concept
+   titles, exact phrases). Fastest, most precise.
+2. **Use vector** when exploring a concept space ("find notes related to
+   decentralized governance"). Handles vocabulary mismatch across languages
+   and terminology.
+3. **Use deep** for broad investigation ("what does the vault contain about
+   the relationship between technology and democracy?"). Most thorough,
+   highest token cost.
+
+The `description` field in frontmatter is indexed alongside full content,
+making filter-before-read work across all three modes. Results include
+relevance scores and document IDs, so agents can retrieve full content
+selectively rather than reading everything.
+
+### What This Changed
+
+Previously, discovery was limited to wikilink traversal and grep-style text
+search. This worked for navigation (following known connections) but failed
+for discovery (finding unknown connections). Semantic search closes this gap:
+an agent running reweave can now find conceptually related files that share
+no common vocabulary. A query about "aesthetic minimalism" will surface files
+about wabi even if the word "minimalism" never appears in them.
+
+This also affects multi-language content. The vault contains files in English,
+Japanese, and occasionally French. Vector search handles cross-lingual
+similarity in ways that keyword search cannot.
+
+---
+
 ## Implementation Checklist
 
 If you're building a similar system, implement in this order:
@@ -414,8 +487,9 @@ If you're building a similar system, implement in this order:
 11. **Multi-machine sync with containment** (different machines get different subsets)
 12. **Task system integration** (knowledge connected to action)
 13. **Domain graduation** (when topics hit critical mass, give them structure)
+14. **Search infrastructure** (keyword + vector + deep search over indexed collections)
 
-Items 1-5 give you 80% of the value. Items 6-13 compound over time.
+Items 1-5 give you 80% of the value. Items 6-14 compound over time.
 
 ---
 
@@ -426,8 +500,6 @@ Items 1-5 give you 80% of the value. Items 6-13 compound over time.
   a fake entity?")
 - **Confidence decay**: Knowledge doesn't automatically become less trusted
   over time. `last_verified` is a manual check, not a decay function.
-- **Semantic search**: Discovery is wikilink-graph and text-search based. No
-  embedding-based similarity search.
 - **Source attribution/compensation**: We track provenance but don't address
   the ethical question of compensating original sources.
 - **Cross-vault federation**: Single-user. No mechanism for merging knowledge
@@ -452,6 +524,8 @@ Items 1-5 give you 80% of the value. Items 6-13 compound over time.
 - **Syncthing**: Peer-to-peer sync that respects containment boundaries
 - **Amplifier** (github.com/microsoft/amplifier): The multi-agent framework
   that operates the system
+- **QMD**: Local search index providing keyword, vector, and deep search over
+  the vault's markdown collections
 
 ---
 

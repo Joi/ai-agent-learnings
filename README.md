@@ -15,10 +15,13 @@ knowledge-management/
   architecture.md          Production knowledge pipeline (3-tier, routing, schemas)
   seven-gates-audit.md     Pipeline completeness framework (from medieval magic scholarship)
   reweave-pattern.md       Backward enrichment: how knowledge compounds through connection
+  agent-identity.md        Persistent agent state across sessions
+  dual-memory-model.md     LTM/STM architecture for knowledge systems
 
 cross-pollination/
   mechanics-of-magic.md    What medieval learned magic teaches about operating opaque systems
   ars-contexta.md          What a Latin encyclopedic framework teaches about knowledge routing
+  ethoswarm.md             What a persistent agent protocol teaches about identity and memory
 
 principles/
   transformation-not-creation.md   Why connecting > adding
@@ -52,6 +55,20 @@ full system overview, then read whichever topic interests you.
 of `architecture.md` gives you a prioritized build order. Items 1-5 give you
 80% of the value.
 
+## Cross-Pollination
+
+The most interesting ideas came from unexpected sources:
+
+- **Medieval magic scholarship** (Kieckhefer, 1994) gave us the Seven Gates audit
+  framework -- a pipeline completeness check derived from Aristotelian four-cause theory
+- **Latin encyclopedic traditions** (Ars Contexta) gave us the description field
+  convention and the reweave pattern
+- **Persistent agent protocols** (Ethoswarm/CryptoSlam) gave us agent identity
+  persistence and the explicit dual memory model
+
+The `cross-pollination/` directory documents each of these in detail: what the
+source was, what we learned, what we implemented, and what we do better.
+
 ## Context
 
 These patterns emerged from building switchboard/jibrain,
@@ -60,10 +77,6 @@ a personal knowledge system that runs on:
 - **Syncthing** (peer-to-peer multi-machine sync)
 - **Amplifier** (Microsoft's multi-agent CLI framework)
 - **Multiple specialized AI agents** (curator, meeting extractor, triage, reweave)
-
-The cross-pollination documents show how ideas from unexpected sources
-(medieval magic scholarship, Latin encyclopedic traditions) produced
-concrete, implementable improvements to the system.
 
 ## License
 

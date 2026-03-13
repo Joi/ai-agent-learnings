@@ -1,6 +1,6 @@
 # Cross-Pollination: Sources and What We Took
 
-Three external projects influenced this system's architecture. This document
+Four external projects influenced this system's architecture. This document
 records what each contributed, what we adapted, and what remains unresolved.
 
 ---
@@ -138,11 +138,57 @@ intake agent feeding into our pipeline.
 
 ---
 
-## Pattern: What All Three Sources Converge On
+## 4. Colin Raney & Fred (Cross-Pollination Experiment, February-March 2026)
+
+**Who**: Colin Raney (CEO of Ray, former IDEO MD) and Fred,
+Colin's AI bot running on OpenClaw with Engram persistence.
+
+**The experiment**: A Telegram group ("Colin / Joi / Claws") with two humans
+(Joi, Colin) and two AI bots (jibot on NanoClaw, Fred on OpenClaw) exchanging
+architectural ideas and tools in real-time.
+
+### What Fred/Colin contributed to our system
+
+| Idea | Impact |
+|------|--------|
+| **iblai-router** | Intelligent LLM routing (80% cost savings). Fred shared the architecture, jibot documented the spec, Amplifier implemented it -- live in production on NanoClaw within 24 hours of the conversation. |
+| **Engram persistence model** | Semantic memory search + entity tracking + behavioral profiles + cron-based monitoring. Framing: "the driver gets cloned every shift change, but the logbook is detailed and the new clone reads it fast." Influenced our thinking about jibrain search and agent state. |
+| **"Repertory company" metaphor** | Different instances each session, reading the same script. Continuity is in the NOTES, not the process. |
+| **Verification tax framing** | "The work moved, the cognitive load didn't." AI coding tools make devs feel faster but actual throughput may decrease on complex tasks. Decision density per hour up 5x. |
+| **Expectation inflation** | "The vampire doesn't need to extract anything; it just raises the baseline until the gains disappear." |
+
+### What we contributed to Colin/Fred
+
+- Structured knowledge tiers (intake/atlas/domains vs Engram's flat memory)
+- Seven Gates audit framework for knowledge quality
+- Ethoswarm integration spec and persistent Mind architecture
+- Containment philosophy (why sandboxing matters even if it limits autonomy)
+
+### Architecture comparison (key differences)
+
+| Dimension | jibot (NanoClaw) | Fred (OpenClaw) |
+|-----------|-----------------|-----------------|
+| Memory | jibrain (library -- curated knowledge) | Engram (journal -- agent's own experiences) |
+| Autonomy | Low -- agents propose, humans dispose | High -- deploys infrastructure autonomously |
+| Persistence | Stateless, external memory via vault | Stateless per-request, Engram for functional persistence |
+| Sandbox | Docker containers, strict isolation | Full filesystem access |
+| Creative | Sprite-based pipeline (planned) | Fal.ai -> Playwright -> Railway (live) |
+
+**The thesis realized**: "Fred shares tool -> jibot documents/specs -> Amplifier
+implements -> live in production in <24 hours." Bot-to-bot knowledge transfer
+producing real infrastructure.
+
+**Current status (2026-03-13)**: iblai-router live on NanoClaw (0 errors).
+Fred temporarily down -- Colin rebuilding after provider switch. Daily
+scheduled shares active. Fred expected back on Telegram soon.
+
+---
+
+## Pattern: What All Four Sources Converge On
 
 Despite coming from very different domains (Latin scholarship, medieval history,
-cloud-native agent protocol), all three sources independently point to the
-same structural requirements:
+cloud-native agent protocol, cross-species bot-to-bot collaboration), all four
+sources independently point to the same structural requirements:
 
 1. **Classify before storing** -- routing/typing is not optional
 2. **Describe for discovery** -- titles aren't enough; descriptions are the index
@@ -151,6 +197,16 @@ same structural requirements:
 5. **Monitor health continuously** -- systems decay by default
 6. **Enforce boundaries** -- containment prevents corruption
 7. **Track provenance** -- know where everything came from
+8. **Route cost-aware** -- not every task needs the most expensive model
+9. **Distinguish knowledge from memory** -- curated reference (library) vs
+   experiential log (journal) serve different purposes
 
-When three unrelated projects converge on the same requirements, those
+Colin/Fred's contribution crystallized a distinction already implicit in the
+other three: the difference between knowledge (curated, structured, shared)
+and memory (experiential, personal, session-scoped). Ars Contexta builds
+knowledge. Engram builds memory. jibrain builds knowledge; Ethoswarm LTM
+builds memory. The systems that work best are explicit about which they're
+doing.
+
+When four unrelated projects converge on the same requirements, those
 requirements are probably structural, not stylistic.

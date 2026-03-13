@@ -1,13 +1,15 @@
 # Ethoswarm × Switchboard: Integration Specification
 
+> **Status (2026-03-13)**: Phase 1 is substantially complete. The Switchboard Curator Mind is LIVE on Telegram. The knowledge-intake sprite accepts POST /intake/structured from the Curator Mind. Content flows through Syncthing to the vault. The heartbeat system (deployed today) automates collection and triage every 15 minutes. Phase 2 (vault search endpoint, bidirectional sync) is in progress.
+
 A bridging document for connecting the Ethoswarm persistent agent protocol
 with the switchboard/jibrain knowledge architecture. Written for the
 engineering teams on both sides.
 
 **From**: Joi's agent infrastructure (Amplifier + switchboard + jibrain)
 **To**: Douglas, Woz, and the Ethoswarm kernel team
-**Date**: 2026-02-26
-**Status**: Proposal for first integration
+**Date**: 2026-02-26 (updated 2026-03-13)
+**Status**: Phase 1 operational, Phase 2 in progress
 
 ---
 
@@ -70,11 +72,11 @@ Neither system does what the other does. The integration surface is clean.
                                    │
                                    ▼
                     ┌──────────────────────────┐
-                    │  Bookmark Extractor       │
+                    │  Knowledge-Intake Sprite  │
                     │  (sprites.dev microVM)    │
                     │                          │
                     │  POST /intake            │
-                    │  Accepts JSON payload    │
+                    │  POST /intake/structured │
                     │  Writes vault markdown   │
                     └────────────┬─────────────┘
                                  │
@@ -97,7 +99,7 @@ Neither system does what the other does. The integration surface is clean.
 2. **Mind classifies** using our routing decision tree (loaded into its instructions)
 3. **Mind extracts** structured knowledge using equipped tools
 4. **Mind outputs** a JSON payload matching our intake schema
-5. **Payload hits** the bookmark-extractor sprite REST API (POST /intake)
+5. **Payload hits** the knowledge-intake sprite REST API (POST /intake/structured)
 6. **Sprite writes** vault-compatible markdown with frontmatter
 7. **Syncthing syncs** the file to all machines
 8. **File appears in intake/** for triage during next active session
@@ -226,10 +228,10 @@ This is the single most important field. It must:
 
 ## Sprite REST API (Ingress Endpoint)
 
-The bookmark-extractor sprite accepts POST requests:
+The knowledge-intake sprite accepts POST requests:
 
 ```
-POST https://bookmark-extractor-bmal2.sprites.app/intake
+POST https://knowledge-intake-bmal2.sprites.app/intake
 Content-Type: application/json
 
 {
@@ -239,15 +241,10 @@ Content-Type: application/json
 }
 ```
 
-**Current limitation**: The sprite currently accepts URLs and does its own
-extraction. For Ethoswarm integration, we'd extend it to accept
-pre-extracted payloads (the JSON schema above) so the Mind does the
-extraction and the sprite just handles formatting and file writing.
-
-### Proposed New Endpoint
+### Structured Intake Endpoint (LIVE)
 
 ```
-POST https://bookmark-extractor-bmal2.sprites.app/intake/structured
+POST https://knowledge-intake-bmal2.sprites.app/intake/structured
 Content-Type: application/json
 
 {
@@ -267,7 +264,8 @@ Response:
 ```
 
 This endpoint accepts pre-structured payloads from the Mind and writes
-them directly as vault markdown. No re-extraction needed.
+them directly as vault markdown. No re-extraction needed. The Curator
+Mind posts to this endpoint in production.
 
 ---
 
@@ -281,7 +279,7 @@ the sprite endpoint in the Ethoswarm App Registry:
   "appId": "switchboard-intake",
   "name": "Switchboard Knowledge Intake",
   "description": "Structured knowledge pipeline with three-tier routing, frontmatter contracts, and quality gates",
-  "endpoint": "https://bookmark-extractor-bmal2.sprites.app/intake/structured",
+  "endpoint": "https://knowledge-intake-bmal2.sprites.app/intake/structured",
   "input_schema": {
     "action": "string (create_intake | create_observation | update_entity)",
     "frontmatter": "object (intake schema)",
@@ -321,7 +319,7 @@ a new one (to prevent duplicates). This requires a search endpoint:
   "toolId": "switchboard-vault-search",
   "name": "Search Switchboard Vault",
   "description": "Search existing knowledge entities to check for duplicates before creating intake",
-  "endpoint": "https://bookmark-extractor-bmal2.sprites.app/search",
+  "endpoint": "https://knowledge-intake-bmal2.sprites.app/search",
   "input": {
     "query": "string",
     "type_filter": "string (optional: concept | person | organization)",
@@ -403,7 +401,7 @@ This keeps the Mind's knowledge of the vault current without full re-export.
 | Primary channel | Telegram (fastest feedback loop) |
 | Secondary channel | Email (amind.ai, for forwarding articles) |
 | Tools | Web extraction, entity recognition, vault search |
-| Output target | bookmark-extractor sprite (POST /intake/structured) |
+| Output target | knowledge-intake sprite (POST /intake/structured) |
 | LTM seed | atlas/ entity index (~847 entities) |
 
 ### Instructions (For Mind's System Prompt)
@@ -483,30 +481,30 @@ This is containment (Gate 4) extended to the Ethoswarm boundary.
 
 ## Implementation Phases
 
-### Phase 1: Basic Intake (Week 1)
+### Phase 1: Basic Intake — ✅ COMPLETE
 
-- Awaken Mind at amind.ai with curator profile
-- Set up Telegram channel
-- Mind does extraction, outputs to email/Telegram (human copies to intake manually)
-- Validate classification accuracy against our routing tree
-- No API integration yet -- just testing the Mind's judgment
+- ✅ Awaken Mind at amind.ai with curator profile
+- ✅ Set up Telegram channel (live, daily usage ~1,500 credits/day)
+- ✅ Mind does extraction, routes through knowledge-intake sprite
+- ✅ Automated pipeline: Telegram → Mind → sprite → Syncthing → intake/ → heartbeat triage
+- ✅ Heartbeat system automates collection and triage every 15 minutes (deployed 2026-03-13)
 
-### Phase 2: Automated Pipeline (Week 2-3)
+### Phase 2: Bidirectional Sync — 🔄 IN PROGRESS
 
-- Extend sprite with /intake/structured endpoint
-- Register sprite as Ethoswarm App
-- Mind outputs directly to sprite API
-- Syncthing handles the rest
-- Test end-to-end: Telegram → Mind → sprite → intake/ → triage
+- ✅ Sprite /intake/structured endpoint live (accepts pre-extracted JSON from Mind)
+- ⏳ Vault search endpoint not yet built (Mind cannot check for duplicates)
+- ⏳ LTM seeding with atlas/ entity index
+- ⏳ Duplicate detection before intake creation
+- ⏳ Incremental LTM updates after triage cycles
 
-### Phase 3: Bidirectional Sync (Week 4+)
+### Phase 3: LTM and Deduplication — ⏳ NOT STARTED
 
-- LTM seeding with atlas/ entity index
+- LTM seeding with full atlas/ entity index
 - Vault search tool equipped on Mind
 - Duplicate detection before intake creation
 - Incremental LTM updates after triage cycles
 
-### Phase 4: Network Effects (Future)
+### Phase 4: Network Effects — ⏳ NOT STARTED
 
 - Register switchboard-intake in App Registry for other Minds
 - Explore kernel-to-kernel intake from collaborator Minds
@@ -532,6 +530,7 @@ our pipeline quality. More intake is only valuable if triage can keep up.
 
 ---
 
-*This document describes a proposed integration between two production systems.
-Both sides maintain their own architecture and constraints. The bridge is the
-JSON schema and the sprite REST API -- everything else stays as-is on each side.*
+*This document describes a live integration between two production systems.
+Phase 1 is operational as of 2026-03-13. Both sides maintain their own
+architecture and constraints. The bridge is the JSON schema and the
+knowledge-intake sprite REST API -- everything else stays as-is on each side.*

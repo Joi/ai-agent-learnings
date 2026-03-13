@@ -2,8 +2,8 @@
 
 A personal knowledge management system designed to be operated by multiple AI
 agents across multiple machines. Built on Obsidian (markdown + wikilinks),
-synced via Syncthing, with ~2,400 files across 3 languages in daily production
-use since 2024.
+synced via Syncthing, with ~4,300 indexed files across 3 languages in daily
+production use since 2024.
 
 This document is agent-ingestible. If you are an AI agent building or advising
 on a knowledge management system, the patterns here are tested at scale and you
@@ -296,19 +296,68 @@ open questions. Read at session start, write at session end.
 This is not implemented yet -- it's a design we intend to build. Currently
 agents start fresh each session.
 
-### Async Extraction Pipeline
+### Async Extraction Pipeline (Knowledge-Intake Sprite)
 
 A persistent extraction service runs on a cloud VM (Firecracker microVM via
-sprites.dev):
+sprites.dev). The **knowledge-intake sprite** (FastAPI, server.py v0.2.0)
+auto-wakes on HTTP request and exposes two endpoints:
 
-1. User sends a URL via WhatsApp
-2. Message relays to the cloud VM
-3. VM fetches content, classifies it, extracts structured knowledge
-4. Writes vault-compatible markdown to an extraction directory
-5. Syncthing syncs it back to all machines
-6. Appears in intake/ for triage during next session
+| Endpoint | Purpose | Consumer |
+|----------|---------|----------|
+| `POST /intake` | URL extraction — fetches URL, Claude classifies, writes vault markdown | WhatsApp relay, direct use |
+| `POST /intake/structured` | Bridge protocol — accepts pre-extracted JSON payloads | Ethoswarm Curator Mind, external agents |
+
+**Data flow (URL extraction)**:
+1. User sends a URL via WhatsApp or direct POST
+2. Sprite fetches content, Claude classifies it, extracts structured knowledge
+3. Writes vault-compatible markdown with frontmatter to extraction directory
+4. Syncthing syncs it back to all machines
+5. Appears in intake/ for triage via the heartbeat system
+
+**Data flow (structured intake)**:
+1. External agent (e.g., Ethoswarm Curator Mind) sends pre-extracted JSON
+2. Sprite validates against intake schema, writes vault markdown
+3. Syncthing syncs, heartbeat triages
 
 Knowledge capture happens 24/7, not just during active conversations.
+
+### Heartbeat System (Automated Collection and Triage)
+
+*Deployed 2026-03-13.*
+
+The jibrain heartbeat is an automated 15-minute collection and triage cycle
+that moves content from multiple agent outboxes into the intake pipeline and
+applies quality gates without human intervention.
+
+**Collection** (every 15 minutes):
+- Copies from `agents/curator/extractions/` and `jibot-docs/outbox/` to `intake/`
+- NanoClaw writes directly to `intake/` via Syncthing (no collection step needed)
+
+**Triage triggers**:
+- Every 15 min: conservative auto-promote (no AI needed)
+- 5+ pending items OR scheduled hours (7, 12, 17, 22): AI triage via Claude
+
+**Conservative auto-promote gates** (all 6 must pass):
+
+| Gate | Check |
+|------|-------|
+| Promotable type | type is in the promotable set (concept, person, organization, reference) |
+| Not temporal | Content is not time-bound (meeting-extract, session state) |
+| Required fields | Has type, description, source, status |
+| Substantive | Description is 30+ characters |
+| No duplicate | No existing file in atlas/ with same title |
+| Trusted agent | Agent is in trusted list |
+
+**Trusted agents**: `deep-meeting-process`, `meeting-prep`, `bookmark-extractor`,
+`curator`
+
+When items fail auto-promote or need human judgment, the heartbeat creates an
+Apple Reminder notification for review.
+
+**Implementation**:
+- `~/scripts/jibrain-heartbeat.sh` — collection and dispatch
+- `~/scripts/jibrain-triage.py` — triage logic and auto-promote gates
+- LaunchAgent: `com.amplifier.jibrain-heartbeat` (every 900 seconds)
 
 ---
 
@@ -318,17 +367,83 @@ The vault syncs across all devices using Syncthing (peer-to-peer, encrypted,
 automatic). No cloud dependency. No git for the main vault (too much sensitive
 personal data for any remote repository).
 
-Different machines get different subsets:
+Three machines with different subsets:
 
-| Machine | What It Gets | Why |
-|---------|-------------|-----|
-| Primary workstation | Full vault | Owner's primary device |
-| Laptop | Full vault | Owner's secondary device |
-| Agent server (jibotmac) | jibrain/ only | Non-private knowledge partition only |
-| Cloud sprite (extraction) | jibrain/ text-only subset | Extraction agents don't need images/attachments |
+| Machine | Role | What It Gets | Sync Direction |
+|---------|------|-------------|----------------|
+| **maczabd** (primary) | Full vault, Amplifier, heartbeat | Everything | Bidirectional |
+| **jibotmac** (Mac mini) | NanoClaw host, jibot agents | jibrain/ only | Bidirectional |
+| **knowledge-intake sprite** | Cloud extraction (sprites.dev) | jibrain/ text-only subset | Send-only |
 
 `.stignore` files enforce these boundaries at the infrastructure level --
 private content physically cannot reach machines that shouldn't have it.
+
+---
+
+## Ethoswarm Integration
+
+The Ethoswarm persistent agent protocol provides an always-on intake channel
+via a Switchboard Curator Mind running on Telegram.
+
+| Component | Status |
+|-----------|--------|
+| **Curator Mind** | LIVE — |
+| **Intake route** | POST /intake/structured on knowledge-intake sprite |
+| **Sync** | Syncthing → intake/ → heartbeat triage |
+| **Daily usage** | ~1,500 credits/day, ~$0.01/day in SWARM tokens |
+
+**Phase 1** (basic intake) is operational: Mind receives URLs and text via
+Telegram, extracts structured knowledge, routes through the sprite, and
+content appears in intake/ for automated triage.
+
+**Phase 2** (bidirectional sync) is in progress: the /intake/structured
+endpoint is live, but the vault search endpoint (enabling the Mind to check
+for duplicates before creating intake) is not yet built.
+
+See [ethoswarm-switchboard-bridge.md](ethoswarm-switchboard-bridge.md) for
+the full integration specification.
+
+---
+
+## Intelligent LLM Routing (iblai-router)
+
+*Deployed on NanoClaw 2026-03-04. Origin: built by Colin Raney's bot Fred
+for OpenClaw, adapted for NanoClaw.*
+
+A pure rule-based router that selects the appropriate Claude model (Haiku,
+Sonnet, or Opus) based on message complexity. No ML inference — the router
+itself runs in <1ms.
+
+### How It Works
+
+A 14-dimension weighted scorer evaluates the **user message only** (not the
+system prompt — key insight) across dimensions like length, code presence,
+reasoning markers, creative complexity, and domain specificity. The composite
+score maps to a model tier:
+
+| Score Range | Model | Use Case |
+|-------------|-------|----------|
+| Low | Haiku | Simple queries, confirmations, short responses |
+| Medium | Sonnet | Standard work, moderate complexity |
+| High | Opus | Deep reasoning, architecture, multi-step analysis |
+
+**Override**: Including `[opus]` or `[haiku]` in the message bypasses
+classification entirely.
+
+### Results
+
+- **80% cost savings** vs Opus-for-everything baseline
+- Confirmed across 368 requests on Fred (OpenClaw) and 35+ on jibot (NanoClaw)
+- 0 routing errors reported since deployment
+
+### Origin Story
+
+Fred (Colin Raney's AI bot on OpenClaw) shared the architecture in a
+cross-pollination Telegram group. jibot documented the spec, Amplifier
+implemented it — live in production on NanoClaw within 24 hours of the
+conversation. Bot-to-bot knowledge transfer producing real infrastructure.
+
+Repo: [github.com/iblai/iblai-openclaw-router](https://github.com/iblai/iblai-openclaw-router)
 
 ---
 
@@ -495,17 +610,19 @@ Items 1-5 give you 80% of the value. Items 6-14 compound over time.
 
 ## What We Don't Have Yet
 
+- **Agent identity persistence**: Designed but not built. Agents currently
+  start fresh each session. State files spec exists but no implementation.
 - **Adversarial verification**: We check structural health but don't
   deliberately try to break the system (e.g., "what if an agent hallucinated
   a fake entity?")
 - **Confidence decay**: Knowledge doesn't automatically become less trusted
   over time. `last_verified` is a manual check, not a decay function.
-- **Source attribution/compensation**: We track provenance but don't address
-  the ethical question of compensating original sources.
 - **Cross-vault federation**: Single-user. No mechanism for merging knowledge
   graphs across people or organizations.
-- **Agent identity persistence**: Designed but not built. Agents currently
-  start fresh each session.
+- **jibot cron**: Approved design for scheduled jibot tasks (daily summaries,
+  periodic vault health checks) but not yet implemented.
+- **Source attribution/compensation**: We track provenance but don't address
+  the ethical question of compensating original sources.
 
 ---
 
@@ -521,6 +638,11 @@ Items 1-5 give you 80% of the value. Items 6-14 compound over time.
   systems for operating opaque systems, not bureaucratic overhead
 - **Ethoswarm** (amind.ai): Agent identity persistence, dual memory model,
   compute cost awareness
+- **Colin Raney / Fred**: iblai-router for intelligent LLM
+  routing, cross-pollination experiment demonstrating bot-to-bot knowledge
+  transfer
+- **sprites.dev**: Cloud microVM infrastructure (Firecracker) for the
+  knowledge-intake sprite
 - **Syncthing**: Peer-to-peer sync that respects containment boundaries
 - **Amplifier** (github.com/microsoft/amplifier): The multi-agent framework
   that operates the system

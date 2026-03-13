@@ -11,6 +11,8 @@ daily use since 2024).
 | Document | What It Covers |
 |----------|---------------|
 | [architecture.md](architecture.md) | The complete system: three-tier pipeline, routing, frontmatter contracts, containment, reweave, Seven Gates audit, multi-agent boundaries, heartbeat triage, search infrastructure, LLM routing, implementation checklist |
+| [knowledge-systems-audit.md](knowledge-systems-audit.md) | Full system audit: component inventory, retrieval systems, sync topology, integration matrix, data flow gaps, Python module status, design doc registry |
+| [tiered-access-design.md](tiered-access-design.md) | Multi-agent security model: four access tiers, signal group architecture, OpenClaw routing, document airgap strategy, migration phases |
 | [cross-pollination.md](cross-pollination.md) | What we learned from four external projects (Ars Contexta, Mechanics of Magic, Ethoswarm, Colin Raney & Fred) and what we adapted |
 | [ethoswarm-switchboard-bridge.md](ethoswarm-switchboard-bridge.md) | Integration spec for connecting Ethoswarm persistent agents with our knowledge pipeline (Phase 1 live, Phase 2 in progress) |
 

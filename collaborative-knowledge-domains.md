@@ -6,7 +6,7 @@
 
 ## The Problem
 
-I run a personal knowledge system with ~4,300 indexed files across an [Obsidian](https://obsidian.md/) vault. Multiple AI agents continuously deposit knowledge into this system: a chat agent running on [NanoClaw](https://github.com/nicholasgasior/nanoclaw) (a lightweight agent gateway that gives each chat group its own sandboxed AI agent), a bookmark-to-knowledge pipeline that extracts structured Markdown from URLs I share via messaging apps, a meeting transcript extractor, and various [Amplifier](https://github.com/microsoft/amplifier) session agents. I curate it, promote the good stuff, and discard the noise. It works.
+I run a personal knowledge system with ~4,300 indexed files across an [Obsidian](https://obsidian.md/) vault. Multiple AI agents continuously deposit knowledge into this system: a chat agent running on [NanoClaw](https://github.com/nicholasgasior/nanoclaw) (a lightweight agent gateway that gives each chat group its own sandboxed AI agent), a bookmark-to-knowledge pipeline that extracts structured Markdown from URLs I share via messaging apps, a meeting transcript pipeline built on [Granola](https://www.granola.so/) and [muesli](https://github.com/harperreed/muesli), and various [Amplifier](https://github.com/microsoft/amplifier) session agents. I curate it, promote the good stuff, and discard the noise. It works.
 
 But I want to collaborate with other humans. I want to share a research domain with a colleague and have both of us -- along with our respective AI agents -- contribute research, with quality control that doesn't require either of us to manually merge everything.
 
@@ -54,7 +54,7 @@ In practice, most intake files aren't written by hand. They arrive from automate
 
 - **Bookmark extraction.** I share a URL via a messaging app. A relay service on a home server picks it up, forwards it to a cloud sandbox ([Sprites](https://sprites.dev/)) running a small FastAPI service that fetches the page, classifies it with an LLM (person? organization? concept? reference?), extracts structured Markdown with YAML frontmatter, and writes it to an intake folder. [Syncthing](https://syncthing.net/) syncs the file back to my vault within seconds. The whole pipeline -- from sharing a link in a chat to a filed knowledge card on my machine -- takes about 10 seconds.
 - **Chat-captured knowledge.** A chat agent running on [NanoClaw](https://github.com/nicholasgasior/nanoclaw) (each chat group gets its own sandboxed Claude instance) can write structured knowledge files to intake when conversations surface durable insights.
-- **Meeting transcripts.** A transcript extractor scans daily note meeting summaries and creates intake files for notable concepts, people, and organizations mentioned in meetings.
+- **Meeting transcripts.** [Granola](https://www.granola.so/) runs during every meeting, producing timestamped transcripts with speaker identification. [muesli](https://github.com/harperreed/muesli) (a Rust CLI by Harper Reed) syncs those transcripts into a local DuckDB database with metadata (attendees, labels) and a vector index for semantic search. A post-processing step translates non-English transcripts, generates summaries, and injects them into Obsidian daily notes. A separate extractor then scans those summaries and creates intake files for notable concepts, people, and organizations mentioned in meetings.
 - **Session agents.** Any AI session (e.g., an [Amplifier](https://github.com/microsoft/amplifier) research session) can deposit findings into intake as a side effect of its work.
 
 ```yaml
@@ -249,6 +249,8 @@ Everything I use is open-source or self-hostable:
 | **Syncthing** | Peer-to-peer file sync | [syncthing.net](https://syncthing.net/) |
 | **Amplifier** | AI agent framework (orchestrates the maintainer and contributor agents) | [github.com/microsoft/amplifier](https://github.com/microsoft/amplifier) |
 | **QMD** | Local semantic search over Markdown | [qmd.io](https://qmd.io/) |
+| **Granola** | AI meeting notepad -- transcribes meetings with speaker identification | [granola.so](https://www.granola.so/) |
+| **muesli** | Rust CLI that syncs Granola transcripts into DuckDB + vector index for semantic search | [github.com/harperreed/muesli](https://github.com/harperreed/muesli) |
 | **NanoClaw** | Lightweight agent gateway -- one sandboxed AI agent per chat group | [github.com/nicholasgasior/nanoclaw](https://github.com/nicholasgasior/nanoclaw) |
 | **Sprites** | Persistent cloud sandboxes for running extraction services | [sprites.dev](https://sprites.dev/) |
 

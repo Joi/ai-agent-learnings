@@ -15,6 +15,7 @@ daily use since 2024).
 | [tiered-access-design.md](tiered-access-design.md) | Multi-agent security model: four access tiers, signal group architecture, OpenClaw routing, document airgap strategy, migration phases |
 | [cross-pollination.md](cross-pollination.md) | What we learned from four external projects (Ars Contexta, Mechanics of Magic, Ethoswarm, Colin Raney & Fred) and what we adapted |
 | [ethoswarm-switchboard-bridge.md](ethoswarm-switchboard-bridge.md) | Integration spec for connecting Ethoswarm persistent agents with our knowledge pipeline (Phase 1 live, Phase 2 in progress) |
+| [collaborative-knowledge-domains.md](collaborative-knowledge-domains.md) | Architecture for multi-human, multi-agent collaborative knowledge domains using file-based intake/curation/atlas pipeline synced with Syncthing -- evaluated against 7 alternative architectures |
 
 ## If You Only Read One Thing
 

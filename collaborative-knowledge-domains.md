@@ -32,7 +32,10 @@ The architecture has three layers: **intake**, **curation**, and **atlas**. It's
 ```
 domains/{topic}/
   _conventions.md          # Domain rules, schemas, tag vocabulary
+  CONTEXT.md               # Session orientation -- read-first for any AI session
   INDEX.md                 # Auto-generated navigation (maintained by curator agent)
+  CHANGELOG.md             # Append-only edit log (maintainer-managed)
+  .writing-style.md        # Voice/tone guide for publications (optional)
   atlas/                   # Promoted durable knowledge
     concepts/
     people/
@@ -44,7 +47,15 @@ domains/{topic}/
     curator/               # Automated research agent deposits
   requests/                # Curator -> contributor asks
   _review/                 # Items needing human judgment
+  publications/            # Versioned export documents
+    drafts/                # Working reports and summaries
+    output/                # Generated PDFs, slide decks
+    archive/               # Superseded versions (never delete)
+    scripts/               # PDF/chart generation scripts
+    assets/                # Generated figures and charts
 ```
+
+The `publications/` layer is what turns a knowledge base into a communication tool. Domain knowledge is valuable, but stakeholders rarely browse an Obsidian vault -- they read PDFs and slide decks. The versioning system (frontmatter-driven, with archived snapshots) is adapted from a production confidential workstream where a single summary document went through 30+ revisions over three months. See the companion [Domain Operations Guide](domain-operations-guide.md) for the full versioning protocol, PDF generation pattern, and interactive tending workflows.
 
 ### How It Works
 

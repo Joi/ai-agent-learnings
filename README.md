@@ -16,6 +16,8 @@ daily use since 2024).
 | [cross-pollination.md](cross-pollination.md) | What we learned from four external projects (Ars Contexta, Mechanics of Magic, Ethoswarm, Colin Raney & Fred) and what we adapted |
 | [ethoswarm-switchboard-bridge.md](ethoswarm-switchboard-bridge.md) | Integration spec for connecting Ethoswarm persistent agents with our knowledge pipeline (Phase 1 live, Phase 2 in progress) |
 | [collaborative-knowledge-domains.md](collaborative-knowledge-domains.md) | Architecture for multi-human, multi-agent collaborative knowledge domains using file-based intake/curation/atlas pipeline synced with Syncthing -- evaluated against 7 alternative architectures |
+| [domain-operations-guide.md](domain-operations-guide.md) | Practical companion: full folder structure, three operating modes (automated curation, interactive tending, publication), versioning system, PDF generation, maintainer agent pipeline, setup checklist |
+| [domain-context-template.md](domain-context-template.md) | Copy-paste template for CONTEXT.md -- the session orientation file that makes interactive AI tending sessions productive from the first prompt |
 
 ## If You Only Read One Thing
 

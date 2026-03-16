@@ -18,6 +18,7 @@ daily use since 2024).
 | [collaborative-knowledge-domains.md](collaborative-knowledge-domains.md) | Architecture for multi-human, multi-agent collaborative knowledge domains using file-based intake/curation/atlas pipeline synced with Syncthing -- evaluated against 7 alternative architectures |
 | [domain-operations-guide.md](domain-operations-guide.md) | Practical companion: full folder structure, three operating modes (automated curation, interactive tending, publication), versioning system, PDF generation, maintainer agent pipeline, setup checklist |
 | [domain-context-template.md](domain-context-template.md) | Copy-paste template for CONTEXT.md -- the session orientation file that makes interactive AI tending sessions productive from the first prompt |
+| [onboarding-grisha-medtech.md](onboarding-grisha-medtech.md) | Contributor onboarding guide for the medtech collaborative domain: system overview, folder structure, intake file format with YAML frontmatter reference, tag vocabulary, step-by-step Syncthing setup, and AI assistant usage |
 
 ## If You Only Read One Thing
 

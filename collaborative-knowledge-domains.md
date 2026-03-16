@@ -8,7 +8,7 @@
 
 I run a personal knowledge system with ~4,300 indexed files across an [Obsidian](https://obsidian.md/) vault. Multiple AI agents -- a [Telegram-based research mind](https://amind.ai/), a chat-capture agent, a meeting transcript extractor, and various Amplifier session agents -- continuously deposit knowledge into this system. I curate it, promote the good stuff, and discard the noise. It works.
 
-But I want to collaborate with other humans. Specifically, I want to share a "medtech" research domain with a colleague and have both of us -- along with our respective AI agents -- contribute research, with quality control that doesn't require either of us to manually merge everything.
+But I want to collaborate with other humans. I want to share a research domain with a colleague and have both of us -- along with our respective AI agents -- contribute research, with quality control that doesn't require either of us to manually merge everything.
 
 The requirements are strict:
 
@@ -30,7 +30,7 @@ The architecture has three layers: **intake**, **curation**, and **atlas**. It's
 ### The Folder Structure
 
 ```
-domains/medtech/
+domains/{topic}/
   _conventions.md          # Domain rules, schemas, tag vocabulary
   INDEX.md                 # Auto-generated navigation (maintained by curator agent)
   atlas/                   # Promoted durable knowledge
@@ -39,8 +39,8 @@ domains/medtech/
     organizations/
     references/
   intake/                  # Per-contributor write queues
-    joi/                   # My agent deposits
-    gal/                   # My collaborator's deposits
+    alice/                 # Alice's agent deposits
+    bob/                   # Bob's deposits
     curator/               # Automated research agent deposits
   requests/                # Curator -> contributor asks
   _review/                 # Items needing human judgment
@@ -53,17 +53,17 @@ domains/medtech/
 ```yaml
 ---
 type: concept
-description: "LNP formulation advances enabling tissue-targeted mRNA delivery beyond liver"
-contributor: gal
+description: "Recent advances in federated learning for privacy-preserving medical imaging"
+contributor: bob
 source: paper
 source_url: https://doi.org/10.1038/...
 source_date: 2026-03-10
-tags: [mRNA, drug-delivery]
+tags: [federated-learning, medical-imaging]
 confidence: high
 status: draft
 ---
 
-# Tissue-Targeted Lipid Nanoparticles
+# Federated Learning for Medical Imaging
 
 Content here...
 ```
@@ -107,13 +107,14 @@ The early versions of this system were write-only: contributors deposited, the m
 ---
 type: request
 requested_by: maintainer-agent
-target_contributors: [gal]
+target_contributors: [bob]
 status: open
 ---
 
 ## What's Needed
-The two recent papers on CRISPR delivery vectors reach opposite conclusions
-about AAV9 tropism in cardiac tissue. Can you check the methodology sections?
+The two recent papers on federated learning reach opposite conclusions
+about differential privacy guarantees under non-IID data. Can you check
+the methodology sections?
 ```
 
 Contributors (and their agents) check `requests/` as part of their workflow.
@@ -124,13 +125,13 @@ Contributors (and their agents) check `requests/` as part of their workflow.
 
 The system stores knowledge as one concept per file, connected by `[[wikilinks]]`. This isn't an arbitrary choice -- it's [Zettelkasten](https://en.wikipedia.org/wiki/Zettelkasten), a method invented by the sociologist Niklas Luhmann, who used it to produce 70 books and nearly 400 scholarly articles over 30 years. His "slip box" held ~90,000 handwritten index cards, each capturing a single idea, each linked to others by a numbering scheme that functioned as a hyperlink system decades before the web.
 
-The core insight: **knowledge is not hierarchical. It's a graph.** A concept like "lipid nanoparticle delivery" connects to mRNA therapeutics, to material science, to Moderna's manufacturing process, to a specific paper Gal read last week. No folder hierarchy captures these relationships. But a flat collection of atomic notes with explicit links between them does -- and the structure emerges from the connections rather than being imposed top-down.
+The core insight: **knowledge is not hierarchical. It's a graph.** A concept like "federated learning" connects to differential privacy, to hospital data governance, to a specific paper a collaborator read last week, to a startup your research agent flagged. No folder hierarchy captures these relationships. But a flat collection of atomic notes with explicit links between them does -- and the structure emerges from the connections rather than being imposed top-down.
 
 ### Why This Matters for AI Agents
 
 Zettelkasten was designed for a single human brain. It turns out to be even better for systems where multiple agents and humans collaborate:
 
-**Atomic notes minimize merge conflicts.** When knowledge lives in long documents, two contributors editing the same document creates a conflict. When knowledge lives in atomic cards -- one concept, one file -- contributors almost never touch the same file. Gal writes `tissue-targeted-lnp.md` while my agent writes `cardiac-aav9-tropism.md`. No collision. The links between them (`[[tissue-targeted-lnp]]` appearing in the AAV9 file) are additive, not conflicting.
+**Atomic notes minimize merge conflicts.** When knowledge lives in long documents, two contributors editing the same document creates a conflict. When knowledge lives in atomic cards -- one concept, one file -- contributors almost never touch the same file. One person writes `federated-learning-privacy.md` while another's agent writes `hospital-data-governance.md`. No collision. The links between them (`[[federated-learning-privacy]]` appearing in the governance file) are additive, not conflicting.
 
 **Links are the cheapest form of curation.** Promoting a file from intake to atlas is a file move. Connecting it to existing knowledge is a wikilink -- five characters (`[[` + name + `]]`). No schema migration, no foreign key, no API call. The maintainer agent can enrich the knowledge graph just by adding links to existing files, which is a trivially safe operation.
 
@@ -138,7 +139,7 @@ Zettelkasten was designed for a single human brain. It turns out to be even bett
 
 **Atomic notes are agent-ingestible.** An AI agent reading a 50-page document has to figure out which parts are relevant. An agent reading a 200-word atomic note with a `description:` field in the frontmatter knows exactly what it's looking at in the first line. The Zettelkasten constraint -- one idea per card -- happens to produce exactly the right granularity for LLM context windows.
 
-**Emergence over taxonomy.** In a traditional knowledge management system, you design your categories first and file documents into them. In a Zettelkasten, you write notes and let clusters emerge. When 15+ files about mRNA delivery accumulate dense cross-links, that cluster has enough gravity to become a domain. This is how my `domains/` directory works -- topics graduate from `atlas/` to their own domain when they reach critical mass. The structure follows the knowledge, not the other way around.
+**Emergence over taxonomy.** In a traditional knowledge management system, you design your categories first and file documents into them. In a Zettelkasten, you write notes and let clusters emerge. When 15+ files on a topic accumulate dense cross-links, that cluster has enough gravity to become a domain. This is how my `domains/` directory works -- topics graduate from `atlas/` to their own domain when they reach critical mass. The structure follows the knowledge, not the other way around.
 
 ### The Luhmann Protocol, Updated
 
@@ -167,7 +168,7 @@ I spent a session evaluating alternatives in depth, drawing on recent papers, pr
 
 [CrewAI](https://www.crewai.com/) has the most sophisticated in-process memory: five cognitive operations, active contradiction detection, composite scoring. [LangGraph](https://www.langchain.com/langgraph) offers typed state with reducer functions and time-travel debugging. [Microsoft's AutoGen](https://github.com/microsoft/autogen) provides conversational shared memory.
 
-**Why not:** All three are single-process, single-machine. They solve agent-to-agent collaboration within a session, not distributed human+agent collaboration across machines and time zones. There's no story for "Gal writes something on his laptop in Tel Aviv and I see it in Tokyo."
+**Why not:** All three are single-process, single-machine. They solve agent-to-agent collaboration within a session, not distributed human+agent collaboration across machines and time zones. There's no story for "my collaborator writes something on their laptop and I see it on mine."
 
 ### 2. Knowledge Graphs (Neo4j GraphRAG, KARMA Pipeline)
 
@@ -191,7 +192,7 @@ I spent a session evaluating alternatives in depth, drawing on recent papers, pr
 
 [Mem0](https://mem0.ai/) (49.9k GitHub stars) is purpose-built for multi-agent memory with automatic compression and graph+vector hybrid retrieval. [Weaviate](https://weaviate.io/) offers native multi-tenancy with agent-focused APIs.
 
-**Why not:** No human authoring interface. These are agent memory layers, not knowledge management systems. Gal can't open a text editor and browse what we know about mRNA delivery.
+**Why not:** No human authoring interface. These are agent memory layers, not knowledge management systems. Your collaborator can't open a text editor and browse what you collectively know about a topic.
 
 ### 6. Event Streaming (Apache Kafka)
 
@@ -217,7 +218,7 @@ My domain folder IS the blackboard. Intake folders are write queues. The maintai
 
 ### Semantic Conflict Resolution
 
-When two contributors write about the same topic with different conclusions, the system needs to detect the overlap. Filename dedup is trivial. Semantic overlap detection -- "these two files are about the same mRNA delivery mechanism but reach different conclusions" -- requires embeddings or LLM comparison. I use [QMD](https://qmd.io/) (a local semantic search index over Markdown files) for this, but it's the least mature part of the pipeline.
+When two contributors write about the same topic with different conclusions, the system needs to detect the overlap. Filename dedup is trivial. Semantic overlap detection -- "these two files are about the same concept but reach different conclusions" -- requires embeddings or LLM comparison. I use [QMD](https://qmd.io/) (a local semantic search index over Markdown files) for this, but it's the least mature part of the pipeline.
 
 The [UCSD paper on multi-agent memory](https://arxiv.org/abs/2603.10062) (March 2026) frames this as analogous to cache coherence in hardware -- but harder, because conflicts are semantic rather than bitwise. Nobody has fully solved this. My approach: detect and preserve both versions for human review rather than attempting automated resolution.
 

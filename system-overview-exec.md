@@ -1,6 +1,6 @@
 # AI-Powered Knowledge Management: A Working System
 
-This document describes a personal AI knowledge management system that has been in daily production use since early 2026. It captures, organizes, connects, and retrieves knowledge across meetings, research, conversations, and bookmarks. The goal here is not to sell anything but to explain how it works, what it costs, and what it would take to build something similar.
+This document describes a personal AI knowledge management system that has been in daily production use since early 2026. It captures, organizes, connects, and retrieves knowledge across meetings, research, conversations, and bookmarks.
 
 ---
 

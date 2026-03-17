@@ -24,7 +24,7 @@ Knowledge flows through three tiers, from raw to refined.
 
 ### Tier 1: Intake
 
-Everything enters here first. A bookmark sent via WhatsApp. A concept extracted from a meeting. A research note from a paper. Each gets a small structured header (type, source, date, a one-line description) and lands in a flat inbox folder.
+Everything enters here first. A bookmark sent via WhatsApp or Telegram. A concept extracted from a meeting. A research note from a paper. Each gets a small structured header (type, source, date, a one-line description) and lands in a flat inbox folder.
 
 Think of intake as a well-organized inbox. Items are tagged draft and unsorted. The system knows they exist but has not yet decided what they are worth.
 
@@ -61,7 +61,7 @@ After promotion, a **reweave** pass runs backward: now that this new entity exis
 
 Multiple specialized agents handle different parts of the workflow. None of them are particularly complex individually. The value is in how they compose.
 
-**Curator agent** (always-on via Telegram). Send it a URL or a research question from your phone. It extracts structured knowledge -- title, summary, key concepts, related entities -- and files it into intake. This is the most-used agent. It turns "that was interesting" into durable, findable knowledge in about 30 seconds.
+**Curator agent** (always-on via WhatsApp or Telegram). Send it a URL or a research question from your phone. It extracts structured knowledge -- title, summary, key concepts, related entities -- and files it into intake. This is the most-used agent. It turns "that was interesting" into durable, findable knowledge in about 30 seconds.
 
 **Meeting extractor**. After meetings are transcribed (by Granola, a macOS app), a pipeline translates Japanese to English when needed, summarizes the discussion, and extracts notable concepts, people, and organizations into the knowledge system.
 
@@ -79,13 +79,25 @@ Multiple specialized agents handle different parts of the workflow. None of them
 
 **Morning**: A routine runs automatically -- syncs tasks, generates a dashboard with focus items, checks repository status, surfaces what needs attention today. Takes about three seconds.
 
-**Throughout the day**: Bookmark interesting things via Telegram. They auto-file into the knowledge system. No friction, no context switching. If you are on an iPad, this works the same way -- send a message, knowledge gets captured.
+**Throughout the day**: Bookmark interesting things via WhatsApp or Telegram. They auto-file into the knowledge system. No friction, no context switching. If you are on an iPad, this works the same way -- send a message, knowledge gets captured.
 
 **Meetings**: Transcribed, translated when needed, summarized. Key concepts and people extracted and cross-referenced against existing knowledge. "Who was that person we met with last month who works on X?" becomes a searchable question.
 
 **Weekly review**: Audit knowledge health. Process accumulated intake. Review stale contacts. Promote what deserves promotion. Discard what does not.
 
 **When building a talk or writing**: The system searches semantically across all accumulated knowledge. Not just keyword matching, but meaning. "What do I know about decentralized governance?" returns relevant notes even if they never use those exact words.
+
+## Deep dives: rapid learning on unfamiliar topics
+
+The daily workflow handles the steady state. But sometimes you need to get smart on something fast -- a major infrastructure project, a new technology area, an unfamiliar policy domain. The system supports a more intensive mode for this.
+
+The process looks like this: gather meeting materials, presentations, and briefing documents into the knowledge system. The AI agents research the topic online -- pulling in background, context, key players, technical details. From all of this, the system produces a structured summary. You review it, give feedback, and the summary gets refined. Meeting notes from related discussions get integrated as they happen, so the picture keeps updating.
+
+For producing output -- memos, briefings, presentation decks -- a collaborative editing mode (Claude cowork) lets you work with AI side by side in a document. You write, the AI suggests, you edit, it restructures. The result is polished output produced faster than either human or AI could manage alone.
+
+The key insight is that this is not just research assistance. It is a feedback loop: gather, synthesize, present, get feedback, refine, gather more. Each cycle makes you meaningfully smarter on the topic. What would normally take weeks of reading and meetings to absorb can be compressed into days.
+
+This works as a solo workflow, but it also works collaboratively. Multiple people can feed materials into the same knowledge base, review the same evolving summaries, and contribute feedback. We are currently using this pattern on a medtech project with a small team, and the shared knowledge base means everyone stays current without status meetings.
 
 ## The tool stack
 
@@ -99,7 +111,7 @@ Multiple specialized agents handle different parts of the workflow. None of them
 | Cloud sandboxes | Sprites (sprites.dev) | Tiny Linux VMs for running extraction services safely. |
 | Task management | Apple Reminders + Beads | Personal tasks in Reminders, dev tasks in Beads (git-integrated). |
 | Meeting transcription | Granola + muesli | Granola records meetings, muesli syncs/translates/indexes. |
-| Always-on AI | amind.ai (Ethoswarm) | Persistent AI agent reachable via Telegram. Always capturing. |
+| Always-on AI | amind.ai (Ethoswarm) | Persistent AI agent reachable via WhatsApp or Telegram. Always capturing. |
 | Slides | Gamma.app | AI-assisted slide generation from structured talk documents. |
 | People intelligence | Nyne.ai | Enrich contact profiles with public information. |
 
@@ -127,22 +139,6 @@ The minimum viable version:
 - **API keys** for AI providers -- pay-per-use, typically $30-100/month for heavy daily use
 
 Initial setup takes a few hours for the basic system. The agents and automation layer can be added incrementally over weeks. The system grows with you -- it does not require a big-bang deployment.
-
-## What this could look like for Bhutan
-
-This is suggestive, not prescriptive. The system was built for one person's needs, but the architecture generalizes.
-
-**Institutional knowledge capture.** A knowledge system for the royal office that captures and connects insights across meetings, briefings, and research. The triage pipeline ensures quality. The search layer makes everything findable.
-
-**Meeting intelligence.** Government discussions transcribed, summarized, and cross-referenced. "What was decided about X in last month's meeting?" becomes answerable. Works across languages.
-
-**Personal research assistant.** Reachable via Telegram or any messaging app. Send a URL, get structured knowledge back. Ask a research question, get a synthesized answer drawing on everything previously captured.
-
-**Collaborative knowledge domains.** When Bhutan-specific topics accumulate depth -- say, Gelephu Mindfulness City planning, or specific policy areas -- they can graduate into curated domains where the team contributes and AI curates.
-
-**Local infrastructure.** The local-first architecture means sensitive government knowledge never needs to leave Bhutanese infrastructure. Syncthing runs peer-to-peer. The vault is just files on devices you control. AI processing can be directed to specific providers or, eventually, local models.
-
-The honest assessment: the system works well but it is not turnkey. It benefits from someone who understands the tools and can adapt the agents to specific workflows. Setting it up for a team is a few days of focused work, not a few minutes.
 
 ---
 

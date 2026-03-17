@@ -24,7 +24,7 @@ Knowledge flows through three tiers, from raw to refined.
 
 ### Tier 1: Intake
 
-Everything enters here first. A bookmark sent via Telegram. A concept extracted from a meeting. A research note from a paper. Each gets a small structured header (type, source, date, a one-line description) and lands in a flat inbox folder.
+Everything enters here first. A bookmark sent via WhatsApp. A concept extracted from a meeting. A research note from a paper. Each gets a small structured header (type, source, date, a one-line description) and lands in a flat inbox folder.
 
 Think of intake as a well-organized inbox. Items are tagged draft and unsorted. The system knows they exist but has not yet decided what they are worth.
 
@@ -36,7 +36,7 @@ Promoted, permanent knowledge. Organized into four categories:
 |----------|--------------|---------|
 | Concepts | Ideas, theories, technologies | Oracle data integrity, techno-populism |
 | People | Public-facing profiles | Researchers, collaborators, officials |
-| Organizations | Institutions and companies | Gelephu Mindfulness City, Digital Garage |
+| Organizations | Institutions and companies | W3C, Digital Garage |
 | References | Source material, articles, papers | Academic papers, policy documents |
 
 Every atlas file has a `description` field -- a one-line summary that lets AI agents scan thousands of files without opening them. This is the single most important design decision in the system. It turns brute-force search into intelligent filtering.

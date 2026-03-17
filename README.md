@@ -25,16 +25,20 @@ Read [architecture.md](architecture.md). It contains everything: the pipeline,
 the principles, the schemas, the audit framework, and the implementation
 checklist. The other documents are supplementary.
 
-## System Status (2026-03-13)
+## System Status (2026-03-17)
 
-The system is **OPERATIONAL** with four major infrastructure components deployed:
+The system is **OPERATIONAL** with eight major infrastructure components deployed:
 
 | Component | Status | What It Does |
 |-----------|--------|-------------|
-| **Heartbeat** | Live (deployed today) | Automated 15-min collection and triage cycle |
+| **Heartbeat** | Live | Automated 15-min collection and triage cycle |
 | **Ethoswarm Curator Mind** | Live | Always-on knowledge intake via Telegram |
 | **QMD Search** | Live (~4,300 files) | Three-mode search: keyword, vector, deep |
 | **iblai-router** | Live (since Mar 4) | Intelligent LLM routing, 80% cost savings |
+| **Amplifier Bundle System** | Live | 18+ tool modules, multi-provider routing, recipe workflows |
+| **Talk Pipeline** | Live | research, outline, produce, slides (Claude + Gamma) |
+| **People Pipeline** | Live | harvest from daily notes, Nyne enrichment, network review |
+| **Meeting Pipeline** | Live | muesli sync, translation, extraction, daily note injection |
 
 ## The System
 

@@ -1,5 +1,7 @@
 # Knowledge Systems Architecture
 
+> **⚠️ STALENESS WARNING (2026-03-17)**: This audit was a point-in-time snapshot from 2026-03-04. Several items listed as gaps or planned have since been resolved (e.g., `/intake/structured` is live, NanoClaw is deployed, bookmark-extractor sprite is deprecated). The Amplifier bundle system has matured significantly with 18+ tool modules, a talk-building pipeline, people harvest/enrichment, and design intelligence capabilities not reflected here. For current architecture, see `architecture.md`. A fresh audit is recommended.
+
 > Comprehensive view of all knowledge extraction, storage, and retrieval systems.
 > Created 2026-03-04 from full audit of jibot-docs, jibot-code, switchboard, amplifier, nanoclaw, and scattered design docs.
 

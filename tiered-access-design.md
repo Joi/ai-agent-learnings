@@ -4,6 +4,8 @@
 **Date**: 2026-02-16 (ongoing)  
 **Author**: Joi + Amplifier
 
+> **⚠️ STALENESS WARNING (2026-03-17)**: Model references (gpt-5.2-pro) are outdated — current stack uses claude-opus-4-6 / gpt-5.4 / gemini-3.1-pro. OpenClaw routing configuration and sandbox agent details may have drifted from production. Verify against agent-mac before relying on specifics. Core four-tier security model remains the active design.
+
 > **Note**: This document is actively being refined. Joi is remote from agent-mac;
 > changes here will be tested when back on local network.
 >

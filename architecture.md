@@ -608,6 +608,26 @@ Items 1-5 give you 80% of the value. Items 6-14 compound over time.
 
 ---
 
+## Recent Additions (2026-03-17)
+
+Capabilities added since the original document was written:
+
+- **Amplifier bundle system matured**: `amplifier-bundle-joi` now contains 18+ tool modules covering home automation, productivity (GTD, beads, email), knowledge (QMD, vault), communications (imessage), media (imagen, kimono), research (academic_search, nyne), and more. Multi-provider routing across Anthropic, OpenAI, and Google. Recipe workflows for all major pipelines.
+
+- **Model routing quality matrix**: Provider routing across claude-opus-4-6 / gpt-5.4 / gemini-3.1-pro with role-based assignment (coding, reasoning, creative, writing, fast, etc.). 80%+ cost reduction vs single-model-for-everything.
+
+- **Talk pipeline**: `talk-builder`, `talk-refresh`, `talk-to-gamma`, `talk-to-slides` recipes. Full workflow from research brief → outline → draft → Gamma presentation → Google Slides export. Operates on `agents/writer/drafts/`.
+
+- **People pipeline**: `people-harvest` (extract contacts from daily notes), `people-enrich` (Nyne API enrichment), `people-review` (network health review). People profiles in `atlas/people/` are now systematically maintained.
+
+- **Meeting pipeline**: muesli sync with Japanese translation (whisper → translation → vault), `meeting-extract` recipe for concept/entity extraction, daily note injection for meeting summaries.
+
+- **Design intelligence**: Component design, layout strategy, responsive patterns, animation, voice agent design — available as skill-guided workflows in Amplifier sessions.
+
+- **bookmark-extractor sprite DEPRECATED**: Replaced by the knowledge-intake sprite (`intake-XXXXX.sprites.example`). The bookmark-extractor FastAPI sprite on sprites.app is no longer active. All URL intake routes through the knowledge-intake sprite.
+
+---
+
 ## What We Don't Have Yet
 
 - **Agent identity persistence**: Designed but not built. Agents currently

@@ -4,7 +4,7 @@ Patterns for building AI-operated knowledge management systems, extracted from
 a production system (~4,300 indexed files, multiple agents, multiple machines,
 daily use since 2024).
 
-*Last updated: 2026-03-13*
+*Last updated: 2026-03-26*
 
 ## Documents
 
@@ -18,6 +18,7 @@ daily use since 2024).
 | [collaborative-knowledge-domains.md](collaborative-knowledge-domains.md) | Architecture for multi-human, multi-agent collaborative knowledge domains using file-based intake/curation/atlas pipeline synced with Syncthing -- evaluated against 7 alternative architectures |
 | [domain-operations-guide.md](domain-operations-guide.md) | Practical companion: full folder structure, three operating modes (automated curation, interactive tending, publication), versioning system, PDF generation, maintainer agent pipeline, setup checklist |
 | [domain-context-template.md](domain-context-template.md) | Copy-paste template for CONTEXT.md -- the session orientation file that makes interactive AI tending sessions productive from the first prompt |
+| [multi-interface-knowledge-layer.md](multi-interface-knowledge-layer.md) | Projecting a personal vault into a team-facing document platform (Onyx) with multi-interface adapters (chat bot, Slack, email), cross-channel deduplication, canonical identity resolution, and policy engine separation |
 
 ## If You Only Read One Thing
 
@@ -25,9 +26,9 @@ Read [architecture.md](architecture.md). It contains everything: the pipeline,
 the principles, the schemas, the audit framework, and the implementation
 checklist. The other documents are supplementary.
 
-## System Status (2026-03-17)
+## System Status (2026-03-26)
 
-The system is **OPERATIONAL** with eight major infrastructure components deployed:
+The system is **OPERATIONAL** with nine major infrastructure components deployed:
 
 | Component | Status | What It Does |
 |-----------|--------|-------------|

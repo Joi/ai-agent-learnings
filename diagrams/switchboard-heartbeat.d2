@@ -1,0 +1,170 @@
+direction: right
+
+# Switchboard Heartbeat & Triage System
+# Pattern: pipeline (collection -> triage -> outcomes)
+# Scope: 15-min automated cycle with quality gates
+
+AGENT OUTBOXES: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Curator Extractions: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  Jibot Outbox: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  NanoClaw Direct: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+Collection: {
+  label: "Heartbeat\nCollection"
+  style: {
+    fill: "#3182ce"
+    stroke: "#E2E5EA"
+    font-color: "#FFFFFF"
+    border-radius: 6
+  }
+}
+
+Intake Queue: {
+  style: {
+    fill: "#2c5282"
+    stroke: "#E2E5EA"
+    font-color: "#FFFFFF"
+    border-radius: 6
+  }
+}
+
+TRIAGE: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Auto Promote: {
+    label: "Auto-Promote\n(6 gates)"
+    style: {
+      fill: "#276749"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  AI Triage: {
+    label: "AI Triage\n(Claude)"
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+OUTCOMES: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Promoted: {
+    label: "atlas/"
+    style: {
+      fill: "#276749"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Needs Review: {
+    label: "Apple Reminder"
+    style: {
+      fill: "#C53030"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Discarded: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+# Collection flow
+AGENT OUTBOXES.Curator Extractions -> Collection: copies {
+  style.stroke: "#475569"
+}
+
+AGENT OUTBOXES.Jibot Outbox -> Collection: copies {
+  style.stroke: "#475569"
+}
+
+AGENT OUTBOXES.NanoClaw Direct -> Intake Queue: writes {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+Collection -> Intake Queue: deposits {
+  style.stroke: "#475569"
+}
+
+# Triage routing
+Intake Queue -> TRIAGE.Auto Promote: every 15 min {
+  style.stroke: "#475569"
+}
+
+Intake Queue -> TRIAGE.AI Triage: 5+ pending {
+  style.stroke: "#475569"
+}
+
+# Outcomes
+TRIAGE.Auto Promote -> OUTCOMES.Promoted: passes all 6 gates {
+  style.stroke: "#276749"
+}
+
+TRIAGE.Auto Promote -> OUTCOMES.Needs Review: fails gate {
+  style.stroke: "#C53030"
+}
+
+TRIAGE.AI Triage -> OUTCOMES.Promoted: recommends {
+  style.stroke: "#276749"
+}
+
+TRIAGE.AI Triage -> OUTCOMES.Needs Review: flags {
+  style.stroke: "#C53030"
+}
+
+TRIAGE.AI Triage -> OUTCOMES.Discarded: rejects {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}

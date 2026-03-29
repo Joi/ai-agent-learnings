@@ -1,0 +1,165 @@
+direction: right
+
+# Switchboard Multi-Machine Sync Topology
+# Pattern: boundary (internal/external split)
+# Scope: 3 machines, Syncthing mesh, external services
+
+LOCAL MACHINES: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Primary Mac: {
+    label: "Primary Mac\n(full vault)"
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Amplifier: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Heartbeat: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Agent Mac: {
+    label: "Agent Mac\n(jibrain only)"
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  NanoClaw: {
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+SYNCTHING: {
+  label: "SYNCTHING MESH"
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Sync Engine: {
+    label: "P2P Encrypted\nSync"
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  stignore: {
+    label: ".stignore\n(containment)"
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+CLOUD: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Knowledge Sprite: {
+    label: "Knowledge Intake\nSprite"
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Ethoswarm: {
+    label: "Ethoswarm\nCurator Mind"
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  LLM Router: {
+    label: "iblai Router\n(Haiku/Sonnet/Opus)"
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+# Internal connections
+LOCAL MACHINES.Primary Mac -> LOCAL MACHINES.Amplifier: runs {
+  style.stroke: "#475569"
+}
+
+LOCAL MACHINES.Primary Mac -> LOCAL MACHINES.Heartbeat: schedules {
+  style.stroke: "#475569"
+}
+
+LOCAL MACHINES.Agent Mac -> LOCAL MACHINES.NanoClaw: hosts {
+  style.stroke: "#475569"
+}
+
+# Syncthing mesh
+LOCAL MACHINES.Primary Mac -> SYNCTHING.Sync Engine: syncs {
+  style.stroke: "#475569"
+}
+
+LOCAL MACHINES.Agent Mac -> SYNCTHING.Sync Engine: syncs {
+  style.stroke: "#475569"
+}
+
+CLOUD.Knowledge Sprite -> SYNCTHING.Sync Engine: sends {
+  style.stroke: "#475569"
+}
+
+SYNCTHING.Sync Engine -> SYNCTHING.stignore: enforces {
+  style.stroke: "#475569"
+}
+
+# Cloud connections
+CLOUD.Ethoswarm -> CLOUD.Knowledge Sprite: posts {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+LOCAL MACHINES.NanoClaw -> CLOUD.LLM Router: routes {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}

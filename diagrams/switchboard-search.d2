@@ -1,0 +1,174 @@
+direction: down
+
+# Switchboard Search Infrastructure
+# Pattern: layered (top-to-bottom 3-tier)
+# Scope: collections -> search modes -> agent consumers
+
+COLLECTIONS: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  jibrain: {
+    label: "jibrain\n~2,400 docs"
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  dailynote: {
+    label: "dailynote\n~1,000 docs"
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  people: {
+    label: "people\n~900 docs"
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+QMD INDEX: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Keyword: {
+    label: "Keyword\n(BM25)"
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Vector: {
+    label: "Vector\n(Embeddings)"
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Deep: {
+    label: "Deep\n(Hybrid + Rerank)"
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+CONSUMERS: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Context Advisor: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Triage Agent: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Reweave Pass: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Meeting Prep: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+# Collection -> Index
+COLLECTIONS.jibrain -> QMD INDEX.Keyword: indexes {
+  style.stroke: "#475569"
+}
+
+COLLECTIONS.jibrain -> QMD INDEX.Vector: embeds {
+  style.stroke: "#475569"
+}
+
+COLLECTIONS.dailynote -> QMD INDEX.Keyword: indexes {
+  style.stroke: "#475569"
+}
+
+COLLECTIONS.dailynote -> QMD INDEX.Vector: embeds {
+  style.stroke: "#475569"
+}
+
+COLLECTIONS.people -> QMD INDEX.Keyword: indexes {
+  style.stroke: "#475569"
+}
+
+COLLECTIONS.people -> QMD INDEX.Vector: embeds {
+  style.stroke: "#475569"
+}
+
+QMD INDEX.Keyword -> QMD INDEX.Deep: combines {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+QMD INDEX.Vector -> QMD INDEX.Deep: combines {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+# Index -> Consumers
+QMD INDEX.Keyword -> CONSUMERS.Triage Agent: queries {
+  style.stroke: "#475569"
+}
+
+QMD INDEX.Vector -> CONSUMERS.Reweave Pass: discovers {
+  style.stroke: "#475569"
+}
+
+QMD INDEX.Deep -> CONSUMERS.Context Advisor: explores {
+  style.stroke: "#475569"
+}
+
+QMD INDEX.Keyword -> CONSUMERS.Meeting Prep: looks up {
+  style.stroke: "#475569"
+}

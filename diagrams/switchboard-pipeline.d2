@@ -1,0 +1,204 @@
+direction: right
+
+# Switchboard Three-Tier Knowledge Pipeline
+# Pattern: pipeline (linear left-to-right flow)
+# Scope: intake (temporal) -> atlas (durable) -> domains (deep)
+
+SOURCES: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Bookmarks: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  Meetings: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  WhatsApp: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  Telegram: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+INTAKE: {
+  label: "INTAKE (TEMPORAL)"
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Queue: {
+    label: "Intake Queue"
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Observations: {
+    label: "Observations"
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+Triage Gate: {
+  style: {
+    fill: "#2c5282"
+    stroke: "#E2E5EA"
+    font-color: "#FFFFFF"
+    border-radius: 6
+  }
+}
+
+ATLAS: {
+  label: "ATLAS (DURABLE)"
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Concepts: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  People: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Organizations: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  References: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+DOMAINS: {
+  label: "DOMAINS (DEEP)"
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Chanoyu: {
+    style: {
+      fill: "#276749"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Structure: {
+    label: "_STRUCTURE.md"
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+# Connections
+SOURCES.Bookmarks -> INTAKE.Queue: extracts {
+  style.stroke: "#475569"
+}
+
+SOURCES.Meetings -> INTAKE.Queue: captures {
+  style.stroke: "#475569"
+}
+
+SOURCES.WhatsApp -> INTAKE.Queue: relays {
+  style.stroke: "#475569"
+}
+
+SOURCES.Telegram -> INTAKE.Queue: routes {
+  style.stroke: "#475569"
+}
+
+INTAKE.Queue -> Triage Gate: reviews {
+  style.stroke: "#475569"
+}
+
+Triage Gate -> ATLAS.Concepts: promotes {
+  style.stroke: "#276749"
+}
+
+Triage Gate -> ATLAS.People: promotes {
+  style.stroke: "#276749"
+}
+
+Triage Gate -> ATLAS.Organizations: promotes {
+  style.stroke: "#276749"
+}
+
+Triage Gate -> ATLAS.References: promotes {
+  style.stroke: "#276749"
+}
+
+ATLAS.Concepts -> DOMAINS.Chanoyu: graduates {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+# Reweave feedback loop
+ATLAS.Concepts -> INTAKE.Queue: reweaves {
+  style.stroke: "#3182ce"
+  style.stroke-dash: 4
+}

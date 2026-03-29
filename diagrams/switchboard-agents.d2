@@ -1,0 +1,170 @@
+direction: right
+
+# Switchboard Multi-Agent Architecture
+# Pattern: swimlane (agent workspace boundaries)
+# Scope: 5 agents with explicit read/write zones
+
+EXTRACTION AGENTS: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Curator: {
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Meeting Extractor: {
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Meeting Prep: {
+    style: {
+      fill: "#3182ce"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+QUALITY GATE: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Triage Agent: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  Human Review: {
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+}
+
+VAULT ZONES: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  intake: {
+    label: "intake/"
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  review: {
+    label: "_review/"
+    style: {
+      fill: "#94A3B8"
+      stroke: "#E2E5EA"
+      font-color: "#1a2332"
+      border-radius: 6
+    }
+  }
+
+  atlas: {
+    label: "atlas/"
+    style: {
+      fill: "#276749"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+
+  domains: {
+    label: "domains/"
+    style: {
+      fill: "#276749"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+CROSS-CUTTING: {
+  style: {
+    fill: "#F7F8FA"
+    stroke: "#E2E5EA"
+  }
+
+  Context Advisor: {
+    style: {
+      fill: "#2c5282"
+      stroke: "#E2E5EA"
+      font-color: "#FFFFFF"
+      border-radius: 6
+    }
+  }
+}
+
+# Agent write paths
+EXTRACTION AGENTS.Curator -> VAULT ZONES.intake: writes {
+  style.stroke: "#475569"
+}
+
+EXTRACTION AGENTS.Meeting Extractor -> VAULT ZONES.intake: writes {
+  style.stroke: "#475569"
+}
+
+EXTRACTION AGENTS.Meeting Prep -> VAULT ZONES.intake: writes {
+  style.stroke: "#475569"
+}
+
+# Triage flow
+QUALITY GATE.Triage Agent -> VAULT ZONES.review: writes {
+  style.stroke: "#475569"
+}
+
+QUALITY GATE.Triage Agent -> VAULT ZONES.intake: reads {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+QUALITY GATE.Human Review -> VAULT ZONES.atlas: promotes {
+  style.stroke: "#276749"
+}
+
+# Context Advisor reads everything
+CROSS-CUTTING.Context Advisor -> VAULT ZONES.atlas: reads {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+CROSS-CUTTING.Context Advisor -> VAULT ZONES.domains: reads {
+  style.stroke: "#475569"
+  style.stroke-dash: 4
+}
+
+CROSS-CUTTING.Context Advisor -> VAULT ZONES.intake: reweaves {
+  style.stroke: "#3182ce"
+  style.stroke-dash: 4
+}

@@ -19,6 +19,7 @@ daily use since 2024).
 | [domain-operations-guide.md](domain-operations-guide.md) | Practical companion: full folder structure, three operating modes (automated curation, interactive tending, publication), versioning system, PDF generation, maintainer agent pipeline, setup checklist |
 | [domain-context-template.md](domain-context-template.md) | Copy-paste template for CONTEXT.md -- the session orientation file that makes interactive AI tending sessions productive from the first prompt |
 | [multi-interface-knowledge-layer.md](multi-interface-knowledge-layer.md) | Projecting a personal vault into a team-facing document platform (Onyx) with multi-interface adapters (chat bot, Slack, email), cross-channel deduplication, canonical identity resolution, and policy engine separation |
+| [onyx-rag-deployment.md](onyx-rag-deployment.md) | Deploying Onyx (open-source RAG platform) as a team-facing knowledge interface: vault projection pipeline, zero-fork customization strategy, custom AI agents, multi-channel governance, infrastructure and cost, lessons learned |
 
 ## If You Only Read One Thing
 
@@ -40,6 +41,7 @@ The system is **OPERATIONAL** with nine major infrastructure components deployed
 | **Talk Pipeline** | Live | research, outline, produce, slides (Claude + Gamma) |
 | **People Pipeline** | Live | harvest from daily notes, Nyne enrichment, network review |
 | **Meeting Pipeline** | Live | muesli sync, translation, extraction, daily note injection |
+| **Onyx (Team Knowledge)** | Live | RAG + chat interface for partner org, vault projection pipeline, multi-channel governance |
 
 ## The System
 

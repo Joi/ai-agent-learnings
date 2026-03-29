@@ -585,6 +585,168 @@ similarity in ways that keyword search cannot.
 
 ---
 
+## Team-Facing Knowledge Interface (Onyx)
+
+A vault of 4,300+ files is powerful for the owner but opaque to collaborators.
+When a partner organization needed searchable, browsable access to relevant
+knowledge subsets, we deployed **Onyx** -- an open-source RAG + chat platform
+(YC W24, formerly Danswer) -- as a team-facing projection of the vault.
+
+The key constraint: the vault is the source of truth. Onyx is a **read-only
+projection**, not a second brain. Knowledge flows one direction: vault → Onyx.
+The team searches and chats against a curated subset. They never touch the
+vault directly.
+
+### Architecture: Vault Projection
+
+```
+jibrain vault (4,300+ files)
+    │
+    ▼
+Projection Pipeline (Python)
+    ├── Scan markdown files
+    ├── Parse frontmatter
+    ├── Normalize types
+    ├── Sensitivity filter (skip confidential/restricted, >1MB)
+    │
+    ▼
+Staged Corpus (filtered subset)
+    │
+    ▼
+Onyx File Upload Connector
+    │
+    ▼
+Team search + chat interface
+```
+
+The **projection pipeline** is a Python script that walks the vault, parses
+YAML frontmatter, and applies a sensitivity filter. Files marked confidential
+or restricted in frontmatter are excluded. Files over 1MB are excluded (binary
+artifacts that leaked into markdown directories). The output is a staged corpus
+directory ready for upload.
+
+⚠️ The corpus refresh is currently manual (`gcloud scp` to the VM, then
+re-upload via the admin UI). Automating this is the single highest-priority
+improvement for this subsystem.
+
+### Why Onyx
+
+We evaluated several open-source RAG platforms. Onyx won on three criteria:
+
+| Criterion | Onyx | Alternatives |
+|-----------|------|-------------|
+| Deployment model | Self-hosted Docker Compose | Many require managed cloud |
+| Customization without forking | Env vars + admin UI | Most require code changes for auth/LLM config |
+| Chat + search in one interface | Native | Often separate tools bolted together |
+
+**Zero-fork strategy**: we run vanilla upstream Onyx. All configuration is
+through environment variables and the admin panel. No custom code in the Onyx
+deployment itself. This means upstream updates are a `docker compose pull`
+away -- no merge conflicts, no drift from mainline.
+
+### Deployment
+
+Docker Compose with ~12 containers:
+
+| Container | Role |
+|-----------|------|
+| Onyx web + API | Frontend and REST API |
+| Vespa | Vector search + document store |
+| PostgreSQL | User data, connector config, chat history |
+| Model server | Embedding model for document indexing |
+| Background workers | Connector sync, indexing pipeline |
+
+Infrastructure:
+
+| Resource | Spec |
+|----------|------|
+| VM | GCP, 4 vCPU, 16 GB RAM, 200 GB SSD |
+| Monthly cost | ~$131 |
+| IaC | 3 scripts: provision, setup, corpus preparation |
+| Firewall | HTTP/HTTPS + Onyx port only |
+| Auth | Google OAuth SSO for team members |
+| LLM | Anthropic Claude (configurable per agent) |
+| Primary connector | File Upload (planned: Slack, Google Drive, web scraper) |
+
+### Custom Agents
+
+Onyx supports **custom AI agents** -- system prompts that shape how the LLM
+responds when chatting against the indexed corpus. We configure these through
+the admin panel. The prompt markdown is stored in the code repo (`agents/*.md`),
+not in the vault -- agent prompts are deployment config, not knowledge.
+
+| Agent | Purpose |
+|-------|---------|
+| Knowledge assistant | Cross-references people and organizations, cites document sources, flags stale information |
+| Domain-specific project analyst | Focused on a particular project domain, references relevant document types and technical/financial data |
+
+Agents are cheap to create and iterate on. The system prompt is the only
+configuration -- Onyx handles retrieval, citation, and conversation management.
+
+### Multi-Interface Envelope Pattern
+
+Onyx is not the only team-facing interface. It is one of four channels feeding
+into a **NormalizedEnvelope** pattern (described in
+[multi-interface-knowledge-layer.md](multi-interface-knowledge-layer.md)):
+
+```
+Onyx ──────┐
+Chat bot ──┤
+Slack ─────┤──▶ NormalizedEnvelope ──▶ Policy Engine ──▶ Actions
+Email ─────┘
+```
+
+Each interface has its own normalizer that maps raw events into a common
+envelope schema. Everything downstream operates on envelopes, not on
+interface-specific payloads. This matters because:
+
+- **Cross-interface identity resolution** maps all user handles (Onyx login,
+  Slack handle, email address, chat bot ID) to canonical actor IDs
+- **Policy engine runs on envelopes**, not on raw interface events -- access
+  control, approval workflows, and audit trails are interface-agnostic
+- **Pydantic schemas** define the envelope contract; policy rules are pure
+  functions over those schemas
+- **File-backed YAML** for approvals and audit logs (no database dependency,
+  git-trackable, portable)
+- **Dedup via SHA-256 fingerprint** prevents duplicate processing when the same
+  request arrives through multiple channels
+
+Adding a new interface (e.g., a WhatsApp bot) requires writing one normalizer.
+The policy engine, audit trail, and action handlers don't change.
+
+### What Worked
+
+1. **Zero-fork strategy** -- upstream Onyx updates apply cleanly because we
+   never patched the source. This is the single most important deployment
+   decision.
+2. **Vault projection with sensitivity filter** -- confidential content stays
+   out of the team-facing interface by construction, not by policy compliance.
+   The filter runs before upload, not at query time.
+3. **Pydantic + pure-function policy engine** -- access control logic is
+   testable, auditable, and independent of any specific interface. No ORM, no
+   database migrations, no framework magic.
+4. **Multi-channel envelope pattern** -- normalizing all interfaces to a common
+   format meant the second interface was nearly free to add, and the third was
+   trivial.
+5. **File-backed audit** -- YAML files in a git repo beat a database for
+   compliance review and portability. Every approval decision is a commit.
+
+### What We'd Do Differently
+
+1. **Automate corpus refresh from day one** -- manual `gcloud scp` is the
+   bottleneck. Every time vault knowledge updates, there's a human-in-the-loop
+   delay before the team sees it. This should be a cron job or a webhook
+   triggered by vault sync.
+2. **Script Onyx admin setup via API** -- the admin panel is convenient for
+   iteration but not reproducible. Agent configs, connector settings, and user
+   permissions should be API-driven for disaster recovery and environment
+   parity.
+3. **Start with the Slack connector** -- team adoption is faster when discovery
+   happens in tools people already use. File upload was technically simpler but
+   required the team to learn a new interface. Meet users where they are.
+
+---
+
 ## Implementation Checklist
 
 If you're building a similar system, implement in this order:
@@ -608,7 +770,7 @@ Items 1-5 give you 80% of the value. Items 6-14 compound over time.
 
 ---
 
-## Recent Additions (2026-03-17)
+## Recent Additions (2026-03-28)
 
 Capabilities added since the original document was written:
 
@@ -625,6 +787,8 @@ Capabilities added since the original document was written:
 - **Design intelligence**: Component design, layout strategy, responsive patterns, animation, voice agent design — available as skill-guided workflows in Amplifier sessions.
 
 - **bookmark-extractor sprite DEPRECATED**: Replaced by the knowledge-intake sprite (`intake-XXXXX.sprites.example`). The bookmark-extractor FastAPI sprite on sprites.app is no longer active. All URL intake routes through the knowledge-intake sprite.
+
+- **Team-facing Onyx deployment**: Deployed Onyx (open-source RAG platform) as a read-only projection of the vault for a partner organization. Zero-fork strategy (vanilla upstream, all config via env vars + admin UI). Vault projection pipeline with sensitivity filter, multi-channel envelope pattern (Onyx + chat bot + Slack + email), file-backed governance (approvals, audit, revisions). See the new section in this document and the companion [onyx-rag-deployment.md](onyx-rag-deployment.md).
 
 ---
 

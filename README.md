@@ -1,7 +1,13 @@
 # AI Agent Learnings
 
+**This content has moved to [jibot.md/learnings](https://jibot.md/learnings/index.md).**
+
+The documents below are archived. For the latest versions, visit jibot.md.
+
+---
+
 Patterns for building AI-operated knowledge management systems, extracted from
-a production system (~4,300 indexed files, multiple agents, multiple machines,
+a production system (~5,700 indexed files, multiple agents, multiple machines,
 daily use since 2024).
 
 *Last updated: 2026-03-26*

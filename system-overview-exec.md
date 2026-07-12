@@ -111,7 +111,7 @@ This works as a solo workflow, but it also works collaboratively. Multiple peopl
 | Cloud sandboxes | Sprites (sprites.dev) | Tiny Linux VMs for running extraction services safely. |
 | Task management | Apple Reminders + Beads | Personal tasks in Reminders, dev tasks in Beads (git-integrated). |
 | Meeting transcription | Granola + muesli | Granola records meetings, muesli syncs/translates/indexes. |
-| Always-on AI | amind.ai (Ethoswarm) | Persistent AI agent reachable via WhatsApp or Telegram. Always capturing. |
+| Always-on AI | amind.ai (Ethoswarm) — retired 2026-07-12 | Was a persistent AI agent reachable via Telegram; deprecated. Structured intake now runs via the bookmarks sync. |
 | Slides | Gamma.app | AI-assisted slide generation from structured talk documents. |
 | People intelligence | Nyne.ai | Enrich contact profiles with public information. |
 

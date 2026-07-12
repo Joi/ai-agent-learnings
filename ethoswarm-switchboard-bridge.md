@@ -1,6 +1,8 @@
 # Ethoswarm × Switchboard: Integration Specification
 
-> **Status (2026-03-13)**: Phase 1 is substantially complete. The Switchboard Curator Mind is LIVE on Telegram. The knowledge-intake sprite accepts POST /intake/structured from the Curator Mind. Content flows through Syncthing to the vault. The heartbeat system (deployed today) automates collection and triage every 15 minutes. Phase 2 (vault search endpoint, bidirectional sync) is in progress.
+> **RETIRED 2026-07-12** — Ethoswarm was deprecated and this integration dismantled (the curator sprite API key was revoked). The Curator Mind no longer runs. The knowledge-intake sprite and its `POST /intake/structured` endpoint remain live, now driven by the amplifier-bundle-joi bookmarks daily sync instead of an Ethoswarm Mind. This document is kept as a historical record of the integration design.
+
+> **Status (2026-03-13, superseded)**: Phase 1 is substantially complete. The Switchboard Curator Mind is LIVE on Telegram. The knowledge-intake sprite accepts POST /intake/structured from the Curator Mind. Content flows through Syncthing to the vault. The heartbeat system (deployed today) automates collection and triage every 15 minutes. Phase 2 (vault search endpoint, bidirectional sync) is in progress.
 
 A bridging document for connecting the Ethoswarm persistent agent protocol
 with the switchboard/jibrain knowledge architecture. Written for the
@@ -9,7 +11,7 @@ engineering teams on both sides.
 **From**: Joi's agent infrastructure (Amplifier + switchboard + jibrain)
 **To**: Douglas, Woz, and the Ethoswarm kernel team
 **Date**: 2026-02-26 (updated 2026-03-13)
-**Status**: Phase 1 operational, Phase 2 in progress
+**Status**: RETIRED 2026-07-12 (was: Phase 1 operational, Phase 2 in progress)
 
 ---
 

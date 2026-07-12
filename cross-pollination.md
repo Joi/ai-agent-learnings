@@ -132,9 +132,10 @@ on low-value work run out.
 
 ### Integration
 
-See [ethoswarm-switchboard-bridge.md](ethoswarm-switchboard-bridge.md) for the
-full bridging specification: how an Ethoswarm Mind can serve as an always-on
-intake agent feeding into our pipeline.
+We built this bridge — an Ethoswarm Mind serving as an always-on intake agent
+feeding into our pipeline — but **retired it on 2026-07-12** when Ethoswarm was
+deprecated. See [ethoswarm-switchboard-bridge.md](ethoswarm-switchboard-bridge.md)
+for the full bridging specification, kept as a historical record.
 
 ---
 

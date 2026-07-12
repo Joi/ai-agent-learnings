@@ -305,7 +305,7 @@ auto-wakes on HTTP request and exposes two endpoints:
 | Endpoint | Purpose | Consumer |
 |----------|---------|----------|
 | `POST /intake` | URL extraction — fetches URL, Claude classifies, writes vault markdown | WhatsApp relay, direct use |
-| `POST /intake/structured` | Bridge protocol — accepts pre-extracted JSON payloads | Ethoswarm Curator Mind, external agents |
+| `POST /intake/structured` | Bridge protocol — accepts pre-extracted JSON payloads | Amplifier bookmarks sync; formerly Ethoswarm Curator Mind (retired 2026-07-12) |
 
 **Data flow (URL extraction)**:
 1. User sends a URL via WhatsApp or direct POST
@@ -315,7 +315,7 @@ auto-wakes on HTTP request and exposes two endpoints:
 5. Appears in intake/ for triage via the heartbeat system
 
 **Data flow (structured intake)**:
-1. External agent (e.g., Ethoswarm Curator Mind) sends pre-extracted JSON
+1. External agent (e.g., the amplifier bookmarks sync; formerly the Ethoswarm Curator Mind, retired 2026-07-12) sends pre-extracted JSON
 2. Sprite validates against intake schema, writes vault markdown
 3. Syncthing syncs, heartbeat triages
 
@@ -380,25 +380,31 @@ private content physically cannot reach machines that shouldn't have it.
 
 ---
 
-## Ethoswarm Integration
+## Ethoswarm Integration (retired 2026-07-12)
 
-The Ethoswarm persistent agent protocol provides an always-on intake channel
+> **Retired 2026-07-12.** Ethoswarm was deprecated and this integration
+> dismantled (the curator sprite API key was revoked). The Curator Mind no
+> longer runs. The `POST /intake/structured` endpoint on the knowledge-intake
+> sprite remains live — now driven by the amplifier-bundle-joi bookmarks daily
+> sync rather than an Ethoswarm Mind. The description below is kept as a record.
+
+The Ethoswarm persistent agent protocol provided an always-on intake channel
 via a Switchboard Curator Mind running on Telegram.
 
 | Component | Status |
 |-----------|--------|
-| **Curator Mind** | LIVE — |
-| **Intake route** | POST /intake/structured on knowledge-intake sprite |
+| **Curator Mind** | Retired 2026-07-12 |
+| **Intake route** | POST /intake/structured on knowledge-intake sprite (still live; now the bookmarks sync) |
 | **Sync** | Syncthing → intake/ → heartbeat triage |
-| **Daily usage** | ~1,500 credits/day, ~$0.01/day in SWARM tokens |
+| **Daily usage** | ~1,500 credits/day, ~$0.01/day in SWARM tokens (while live) |
 
-**Phase 1** (basic intake) is operational: Mind receives URLs and text via
-Telegram, extracts structured knowledge, routes through the sprite, and
-content appears in intake/ for automated triage.
+**Phase 1** (basic intake) was operational: the Mind received URLs and text via
+Telegram, extracted structured knowledge, routed through the sprite, and
+content appeared in intake/ for automated triage.
 
-**Phase 2** (bidirectional sync) is in progress: the /intake/structured
-endpoint is live, but the vault search endpoint (enabling the Mind to check
-for duplicates before creating intake) is not yet built.
+**Phase 2** (bidirectional sync) was never completed: the /intake/structured
+endpoint went live, but the vault search endpoint (enabling the Mind to check
+for duplicates before creating intake) was not built before retirement.
 
 See [ethoswarm-switchboard-bridge.md](ethoswarm-switchboard-bridge.md) for
 the full integration specification.

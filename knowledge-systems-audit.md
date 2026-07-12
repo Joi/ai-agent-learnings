@@ -2,6 +2,8 @@
 
 > **⚠️ STALENESS WARNING (2026-03-17)**: This audit was a point-in-time snapshot from 2026-03-04. Several items listed as gaps or planned have since been resolved (e.g., `/intake/structured` is live, NanoClaw is deployed, bookmark-extractor sprite is deprecated). The Amplifier bundle system has matured significantly with 18+ tool modules, a talk-building pipeline, people harvest/enrichment, and design intelligence capabilities not reflected here. For current architecture, see `architecture.md`. A fresh audit is recommended.
 
+> **RETIRED (2026-07-12)**: The Ethoswarm / jimindbot path (the Switchboard Curator Mind) shown as a live/testing input below has been **retired and dismantled** (curator sprite API key revoked). The `/intake/structured` endpoint it targeted remains live, now driven by the amplifier-bundle-joi bookmarks daily sync. Treat every jimindbot / Ethoswarm / amind.ai reference below as historical.
+
 > Comprehensive view of all knowledge extraction, storage, and retrieval systems.
 > Created 2026-03-04 from full audit of jibot-docs, jibot-code, switchboard, amplifier, nanoclaw, and scattered design docs.
 
@@ -239,7 +241,7 @@ jibrain partition specifically:
 | jibrain recipes | Amplifier recipes (triage, meeting-extract, reweave) | YAML | Active |
 | OpenClaw | agent-mac :18789 | Node.js | Active (being replaced) |
 | signal-cli | agent-mac :8080 | Java | Active, standalone |
-| jimindbot (Ethoswarm) | cloud (Mind ID: XXXXXXXX) | Ethoswarm platform | Provisioned, testing |
+| jimindbot (Ethoswarm) | cloud (Mind ID: XXXXXXXX) | Ethoswarm platform | Retired 2026-07-12 |
 | bookmark-relay | agent-mac :9999 | Node.js | Active |
 | Syncthing | all machines | Go | Active |
 | agent-mac-heartbeat | ~/scripts/ | bash (launchd) | Active |
@@ -250,7 +252,7 @@ jibrain partition specifically:
 |-----------|----------|--------|
 | NanoClaw | github.com/qwibitai/nanoclaw | **DEPLOYED** on agent-mac, jibrain hook live |
 | switchboard sharing (concepts, orgs, people-public) | jibot-docs | Designed, not implemented |
-| Ethoswarm /intake/structured endpoint | bookmark-extractor sprite | Designed, needs implementation |
+| Ethoswarm /intake/structured endpoint | bookmark-extractor sprite | Retired 2026-07-12 (Ethoswarm deprecated; endpoint now driven by the bookmarks sync) |
 | Amplifier bridge (GTD data → agent-mac) | Not started | Design exists in upgrade docs |
 | Proactive agent (morning briefing) | Not started | Designed in upgrade analysis |
 | Voice bridge NanoClaw integration | ios-openclaw-voice | Deferred |
@@ -273,7 +275,7 @@ Which systems know about each other?
 | System A | System B | Integration | Status |
 |----------|----------|-------------|--------|
 | WhatsApp | bookmark-extractor | via jibot relay | Working |
-| Telegram | bookmark-extractor | via jimindbot (Ethoswarm) | Testing |
+| Telegram | bookmark-extractor | via jimindbot (Ethoswarm) | Retired 2026-07-12 |
 | bookmark-extractor | jibrain/intake | Writes vault markdown via Syncthing | Working |
 | QMD | switchboard vault | Indexes jibrain, dailynote, people | Working |
 | QMD | concepts/, organizations/, chanoyu/ | NOT indexed | Gap |
@@ -287,7 +289,7 @@ Which systems know about each other?
 | OpenClaw | NanoClaw | Migration complete, NanoClaw deployed | Done |
 | Amplifier GTD | agent-mac agents | NO integration (key gap) | Gap |
 | jibrain | talk writing | Writer agent drafts exist, no pipeline | Gap |
-| Ethoswarm | sprite /intake/structured | Needs implementation | Gap |
+| Ethoswarm | sprite /intake/structured | Retired 2026-07-12 (Ethoswarm deprecated) | Retired |
 | knowledge_synthesis | jibrain | No automated flow between them | Gap |
 | QMD | agent-mac agents | No access from agent-mac | Gap |
 
@@ -378,9 +380,9 @@ The "chanoyu pattern" for exporting concepts/, organizations/, and people-public
 | Document | Location | Status |
 |----------|----------|--------|
 | Ethoswarm Architecture | switchboard/jibrain/intake/ethoswarm-architecture.md | **Draft** |
-| Ethoswarm Integration Thread | switchboard/jibrain/intake/.observations/ | **Active** |
+| Ethoswarm Integration Thread | switchboard/jibrain/intake/.observations/ | **Retired 2026-07-12** |
 | Ethoswarm Technical Brief | ~/Documents/ethoswarm_agentic_integration_brief_v1_0.md | **External** |
-| jimindbot System Prompt | switchboard/agents/_shared/jimindbot-system-prompt.md | **Active** |
+| jimindbot System Prompt | switchboard/agents/_shared/jimindbot-system-prompt.md | **Retired 2026-07-12** |
 | amind.ai | switchboard/jibrain/intake/amind-ai.md | **Draft** |
 
 ---
